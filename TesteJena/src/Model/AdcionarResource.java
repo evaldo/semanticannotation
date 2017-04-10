@@ -1,3 +1,5 @@
+package Model;
+
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -8,7 +10,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.VCARD;
 
-public class Tutorial03 extends Object {
+public class AdcionarResource extends Object {
 
     public static void main(String args[]) {
 //  Criando um modelo vazio

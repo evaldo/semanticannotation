@@ -30,10 +30,10 @@ public class ControllerJena extends HttpServlet {
             
             request.setAttribute("ClassesOnt", ont.listarClasses());
             
-            if(classe != null){
+            if(classe != null || classe == ""){
             request.setAttribute("SubClassesOnt", ont.listarSubClasses(classe));
             }
-            
+            System.out.println(ont.listarClasses());
         request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
 
         }

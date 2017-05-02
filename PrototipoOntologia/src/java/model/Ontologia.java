@@ -46,6 +46,7 @@ public class Ontologia {
             OntClass essaClasse = (OntClass) classes.next();
 
             String vClasse = essaClasse.getLocalName();
+            if(vClasse !="" && vClasse !=null)
             o.add(vClasse);
 
         }

@@ -5,10 +5,17 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Protótipo de ontologias</title>
+        <style>
+            table{
+                float:left;
+                border: 1px blue solid;
+            }
+        </style>
     </head>
     <body>
         <h1></h1>
-            <table border="1px" cellspacing=0>
+        <div style="display: inline">
+            <table >
                 <thead>
                     <tr>
                         <th>Nome das classes</th>
@@ -26,7 +33,7 @@
 
                 </tbody>
             </table>
-            <div float="right">
+         
                 <table border="1px" cellspacing=0 >
                     <thead>
                         <tr>

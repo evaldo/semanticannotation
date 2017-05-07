@@ -6,42 +6,61 @@
 package controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import model.Ontologia;
 
 /**
  *
  * @author Filipe
  */
-@WebServlet(name = "ControllerJena", urlPatterns = {"/listarOntologias","/teste"})
+@WebServlet(name = "ControllerJena", urlPatterns = {"/listarOntologias", "/selecionarOntologias"})
 public class ControllerJena extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession sessao = request.getSession();
         if (request.getRequestURI().contains("/listarOntologias")) {
-            String classe =  request.getParameter("nomeClasse");
-            String inputFileName = "c://urbanus.owl";
-            Ontologia ont = new Ontologia(inputFileName);
-            
-            request.setAttribute("ClassesOnt", ont.listarClasses());
-            
-            if(classe != null || classe == ""){
-            request.setAttribute("SubClassesOnt", ont.listarSubClasses(classe));
+
+            String nomeclasse = request.getParameter("nomeClasse");
+            String nomeArquivo = request.getParameter("arq_ontologia");
+            String uri = request.getParameter("uri");
+
+            if (sessao.getAttribute("ontSessao") == null) {
+                Ontologia ont = new Ontologia(nomeArquivo, uri);
+
+                sessao.setAttribute("ontSessao", ont);
             }
-            System.out.println(ont.listarClasses());
-        request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
+            
+            Ontologia ontSessao = (Ontologia) sessao.getAttribute("ontSessao");
+            
+            request.setAttribute("ClassesOnt", ontSessao.listarClasses());
+            
+            request.setAttribute("arq_ontologiaTxt",ontSessao.getInputFileName());
+            request.setAttribute("uriTxt",ontSessao.getURI());
+            
+            if (nomeclasse != null ) {//verificar lógica
+                System.out.println(nomeclasse);
+                request.setAttribute("SubClassesOnt", ontSessao.listarSubClasses(nomeclasse));
+                
+                        
+            }
+
+            request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
 
         }
-        
-        if (request.getRequestURI().contains("/teste")) {
-        request.getRequestDispatcher("/WEB-INF/newjsp.jsp").forward(request, response);
+
+        if (request.getRequestURI().contains("/selecionarOntologias")) {
+            sessao.invalidate();
+            request.getRequestDispatcher("/WEB-INF/formOntologia.jsp").forward(request, response);
         }
-        
+
     }
 
     /**
@@ -55,7 +74,7 @@ public class ControllerJena extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            
+
     }
 
     /**

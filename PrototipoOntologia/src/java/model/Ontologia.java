@@ -22,18 +22,20 @@ import org.apache.jena.util.iterator.ExtendedIterator;
  */
 public class Ontologia {
 
-    String inputFileName = "c://urbanus.owl";
+    String inputFileName = "";
+    String URI = "";
 
-    public Ontologia(String inputFileName) {
+
+    public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
-    }
-//create the reasoning model using the base
-    
+        this.URI=URI;
+    }  
 
     public List listarClasses() {
         OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        String URI = "http://www.owl-ontologies.com/unnamed.owl#";
+   
         InputStream in = FileManager.get().open(inputFileName);
+       
             if (in == null) {
                 throw new IllegalArgumentException("File: " + inputFileName + " not found");
             }
@@ -54,13 +56,15 @@ public class Ontologia {
     }
 
     public List listarSubClasses(String classe) {
-        OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        String URI = "http://www.owl-ontologies.com/unnamed.owl#";
+      OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+       
         InputStream in = FileManager.get().open(inputFileName);
+        
             if (in == null) {
                 throw new IllegalArgumentException("File: " + inputFileName + " not found");
             }
         inf.read(in, "");
+        
         OntClass cla = inf.getOntClass(URI + classe);
         ArrayList<String> sc = new ArrayList<String>();
         if (cla.hasSubClass()) {
@@ -83,5 +87,15 @@ public class Ontologia {
     public void setInputFileName(String inputFileName) {
         this.inputFileName = inputFileName;
     }
+
+    public String getURI() {
+        return URI;
+    }
+
+    public void setURI(String URI) {
+        this.URI = URI;
+    }
+
+    
 
 }

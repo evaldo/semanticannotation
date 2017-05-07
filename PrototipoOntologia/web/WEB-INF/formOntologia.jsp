@@ -12,6 +12,14 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Hello World!</h1> 
+        <form action="listarOntologias"  method="get">
+        Insira o arquivo de Ontologia:
+        <input type="text" name="arq_ontologia"><p> 
+         
+            Insira a URI:<p>
+            <input type="text" name="uri"><p>
+                <input type="submit" value="Enviar">
+        </form>
     </body>
 </html>

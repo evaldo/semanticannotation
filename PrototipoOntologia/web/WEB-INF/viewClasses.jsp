@@ -9,49 +9,52 @@
             table{
                 float:left;
                 border: 1px blue solid;
+                border-radius: 20px;
             }
         </style>
     </head>
     <body>
-        <h1></h1>
-        <div style="display: inline">
-            <table >
-                <thead>
+        ${arq_ontologiaTxt}<p>
+        ${uriTxt}
+        <p>
+            <p>
+        <table >
+            <thead>
+                <tr>
+                    <th>Nome das classes</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                <c:forEach var="classe" items="${ClassesOnt}">
                     <tr>
-                        <th>Nome das classes</th>
+
+                        <td><button onclick="location.href = 'listarOntologias?nomeClasse=${classe}'">${classe}</button></td>
+
                     </tr>
+                </c:forEach>  
 
-                </thead>
-                <tbody>
-                    <c:forEach var="classe" items="${ClassesOnt}">
-                        <tr>
+            </tbody>
+        </table>
 
-                            <td><button onclick="location.href = 'listarOntologias?nomeClasse=${classe}'">${classe}</button></td>
+        <table >
+            <thead>
+                <tr>
+                    <th>Sub-classes</th>
+                </tr>
 
-                        </tr>
-                    </c:forEach>  
+            </thead>
+            <tbody>
+                <c:forEach var="k" items="${SubClassesOnt}">
+                    <tr>
+                        <td>${k}</td>
 
-                </tbody>
-            </table>
-         
-                <table border="1px" cellspacing=0 >
-                    <thead>
-                        <tr>
-                            <th>Sub-classes</th>
-                        </tr>
+                    </tr>
+                </c:forEach>  
 
-                    </thead>
-                    <tbody>
-                        <c:forEach var="k" items="${SubClassesOnt}">
-                            <tr>
-                                <td>${k}</td>
+            </tbody>
+        </table>
 
-                            </tr>
-                        </c:forEach>  
-
-                    </tbody>
-                </table>
-            </div>
 
     </body>
 </html>

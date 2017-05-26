@@ -24,60 +24,89 @@ public class Ontologia {
 
     String inputFileName = "";
     String URI = "";
-
+    String arvore;
 
     public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
-        this.URI=URI;
-    }  
+        this.URI = URI;
+    }
+    List<String> Listarvore = new ArrayList<>();
 
-    public List listarClasses() {
-        OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-   
-        InputStream in = FileManager.get().open(inputFileName);
-       
+    public List<String> listarClasses() {
+
+        try {
+
+            OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+            InputStream in = FileManager.get().open(inputFileName);
             if (in == null) {
                 throw new IllegalArgumentException("File: " + inputFileName + " not found");
             }
-        inf.read(in, "");
-        ArrayList<String> o = new ArrayList<String>();
+            inf.read(in, "");
+            ExtendedIterator classes = inf.listClasses();
+            while (classes.hasNext()) {
+                OntClass essaClasse = (OntClass) classes.next();
 
-        ExtendedIterator classes = inf.listClasses();
+                String vClasse = essaClasse.getLocalName();
+                if (vClasse != null) {
 
-        while (classes.hasNext()) {
-            OntClass essaClasse = (OntClass) classes.next();
+                    if (essaClasse.hasSubClass()) {
+                        arvore = "<details><summary>Classe:" + vClasse + "</summary>";
+                        Listarvore.add(arvore);
+                        OntClass cla = inf.getOntClass(URI + vClasse);
+                        for (Iterator i = cla.listSubClasses(); i.hasNext();) {
+                            OntClass c = (OntClass) i.next();
 
-            String vClasse = essaClasse.getLocalName();
-            if(vClasse !="" && vClasse !=null)
-            o.add(vClasse);
+                            String subClasse = c.getLocalName();
+                            listarSubClasses(subClasse);
 
+                        }
+                            arvore = "</details>";
+                                          Listarvore.add(arvore);
+                    } else{
+                        arvore = "<summary>Classe:" + vClasse + "</summary>";
+                        Listarvore.add(arvore);
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        return o;
+        return Listarvore;
     }
 
-    public List listarSubClasses(String classe) {
-      OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-       
+    public void listarSubClasses(String classe) {
+        OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+
         InputStream in = FileManager.get().open(inputFileName);
-        
-            if (in == null) {
-                throw new IllegalArgumentException("File: " + inputFileName + " not found");
-            }
+
+        if (in == null) {
+            throw new IllegalArgumentException("File: " + inputFileName + " not found");
+        }
         inf.read(in, "");
-        
+
         OntClass cla = inf.getOntClass(URI + classe);
         ArrayList<String> sc = new ArrayList<String>();
+
         if (cla.hasSubClass()) {
+            arvore = "<details><summary>SubClasse:" + classe + "</summary>";
+            Listarvore.add(arvore);
             for (Iterator i = cla.listSubClasses(); i.hasNext();) {
                 OntClass c = (OntClass) i.next();
 
                 String VSubClasses = c.getLocalName();
-                sc.add(VSubClasses);
 
+                arvore = "<p>" + VSubClasses + " é uma sub classe de " + classe;
+                Listarvore.add(arvore);
+                
             }
-
+            arvore = "</details>";
+            Listarvore.add(arvore);
+        } else {
+            arvore = "<summary>" + classe + "</summary>";
+            Listarvore.add(arvore);
         }
-        return sc;
+
     }
 
     public String getInputFileName() {
@@ -95,7 +124,5 @@ public class Ontologia {
     public void setURI(String URI) {
         this.URI = URI;
     }
-
-    
 
 }

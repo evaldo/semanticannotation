@@ -27,38 +27,14 @@ public class ControllerJena extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sessao = request.getSession();
         if (request.getRequestURI().contains("/listarOntologias")) {
+            String nomeArquivo ="c:\\urbanus.owl";
+            String uri = "http://www.owl-ontologies.com/unnamed.owl#";
 
-            String nomeclasse = request.getParameter("nomeClasse");
-            String nomeArquivo = request.getParameter("arq_ontologia");
-            String uri = request.getParameter("uri");
-
-            if (sessao.getAttribute("ontSessao") == null) {
-                Ontologia ont = new Ontologia(nomeArquivo, uri);
-
-                sessao.setAttribute("ontSessao", ont);
-            }
-            
-            Ontologia ontSessao = (Ontologia) sessao.getAttribute("ontSessao");
-            
-            request.setAttribute("ClassesOnt", ontSessao.listarClasses());
-            
-            request.setAttribute("arq_ontologiaTxt",ontSessao.getInputFileName());
-            request.setAttribute("uriTxt",ontSessao.getURI());
-            
-            if (nomeclasse != null ) {//verificar lógica
-                System.out.println(nomeclasse);
-                request.setAttribute("SubClassesOnt", ontSessao.listarSubClasses(nomeclasse));
-                
-                        
-            }
+            Ontologia ont = new Ontologia(nomeArquivo,uri);
+            request.setAttribute("ClassesOnt", ont.listarClasses());
 
             request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
 
-        }
-
-        if (request.getRequestURI().contains("/selecionarOntologias")) {
-            sessao.invalidate();
-            request.getRequestDispatcher("/WEB-INF/formOntologia.jsp").forward(request, response);
         }
 
     }

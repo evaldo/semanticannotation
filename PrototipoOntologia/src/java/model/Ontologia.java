@@ -15,6 +15,7 @@ import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import virtuoso.jena.driver.*;
 
 /**
  *
@@ -35,7 +36,7 @@ public class Ontologia {
     public List<String> listarClasses() {
 
         try {
-
+            
             OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
             InputStream in = FileManager.get().open(inputFileName);
             if (in == null) {
@@ -98,6 +99,9 @@ public class Ontologia {
 
                 arvore = "<p>" + VSubClasses + " é uma sub classe de " + classe;
                 Listarvore.add(arvore);
+                if (c.hasSubClass()){
+                listarSubClasses(VSubClasses);
+            }
                 
             }
             arvore = "</details>";

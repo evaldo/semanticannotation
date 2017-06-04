@@ -25,11 +25,17 @@ public class ControllerJena extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession sessao = request.getSession();
+        
+        if (request.getRequestURI().contains("/selecionarOntologias")) {
+            request.getRequestDispatcher("/WEB-INF/formOntologia.jsp").forward(request, response);
+        }
         if (request.getRequestURI().contains("/listarOntologias")) {
-            String nomeArquivo ="c:\\urbanus.owl";
-            String uri = "http://www.owl-ontologies.com/unnamed.owl#";
+            // String nomeArquivo ="c:\\urbanus.owl";
+            //String uri = "http://www.owl-ontologies.com/unnamed.owl#";
 
+            String nomeArquivo = request.getParameter("arq_ontologia");
+            String uri = request.getParameter("uri");
+            
             Ontologia ont = new Ontologia(nomeArquivo,uri);
             request.setAttribute("ClassesOnt", ont.listarClasses());
 

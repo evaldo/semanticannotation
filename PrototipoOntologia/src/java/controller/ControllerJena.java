@@ -30,11 +30,11 @@ public class ControllerJena extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/formOntologia.jsp").forward(request, response);
         }
         if (request.getRequestURI().contains("/listarOntologias")) {
-            // String nomeArquivo ="c:\\urbanus.owl";
-            //String uri = "http://www.owl-ontologies.com/unnamed.owl#";
+             String nomeArquivo ="/home/filipe/Downloads/urbanus.owl";
+            String uri = "http://www.owl-ontologies.com/unnamed.owl#";
 
-            String nomeArquivo = request.getParameter("arq_ontologia");
-            String uri = request.getParameter("uri");
+            //String nomeArquivo = request.getParameter("arq_ontologia");
+            //String uri = request.getParameter("uri");
             
             Ontologia ont = new Ontologia(nomeArquivo,uri);
             request.setAttribute("ClassesOnt", ont.listarClasses());

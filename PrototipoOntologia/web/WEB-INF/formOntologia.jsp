@@ -13,9 +13,9 @@
     </head>
     <body>
         <h1>Hello World!</h1> 
-        <form action="listarOntologias"  method="get">
+        <form action="listarOntologias" enctype="multipart/form-data" method="post">
         Insira o arquivo de Ontologia:
-        <input type="text" name="arq_ontologia"><p> 
+        <input type="file" name="arquivo"><p> 
          
             Insira a URI:<p>
             <input type="text" name="uri"><p>

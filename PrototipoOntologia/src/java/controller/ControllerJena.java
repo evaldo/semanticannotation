@@ -5,14 +5,17 @@
  */
 package controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import model.Ontologia;
 
 /**
@@ -20,29 +23,16 @@ import model.Ontologia;
  * @author Filipe
  */
 @WebServlet(name = "ControllerJena", urlPatterns = {"/listarOntologias", "/selecionarOntologias"})
+@MultipartConfig
 public class ControllerJena extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         if (request.getRequestURI().contains("/selecionarOntologias")) {
             request.getRequestDispatcher("/WEB-INF/formOntologia.jsp").forward(request, response);
         }
-        if (request.getRequestURI().contains("/listarOntologias")) {
-             String nomeArquivo ="/home/filipe/Downloads/urbanus.owl";
-            String uri = "http://www.owl-ontologies.com/unnamed.owl#";
-
-            //String nomeArquivo = request.getParameter("arq_ontologia");
-            //String uri = request.getParameter("uri");
-            
-            Ontologia ont = new Ontologia(nomeArquivo,uri);
-            request.setAttribute("ClassesOnt", ont.listarClasses());
-
-            request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
-
-        }
-
     }
 
     /**
@@ -57,6 +47,35 @@ public class ControllerJena extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        if (request.getRequestURI().contains("/listarOntologias")) {
+
+            String pastaProgeto = getServletContext().getRealPath("");
+            String nomeArquivo = upLoad(request, response, pastaProgeto);
+            System.out.println(pastaProgeto);
+            String uri = request.getParameter("uri");
+            System.out.println(uri);
+
+            Ontologia ont = new Ontologia(nomeArquivo, uri);
+            request.setAttribute("ClassesOnt", ont.listarClasses());
+            request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
+        }
+    }
+
+    public String upLoad(HttpServletRequest request, HttpServletResponse response, String pastaProgeto) throws IOException, ServletException {
+        String pastaArquivos = "arquivos";
+        String salvarEm = pastaProgeto + File.separator + pastaArquivos;
+        System.out.println("Salvando arquivo em: " + salvarEm);
+        File pasta = new File(salvarEm);
+        if (!pasta.exists()) {
+            pasta.mkdir();
+        }
+        Part arquivoSelecionado = request.getPart("arquivo");
+        String nomeArquivo = arquivoSelecionado.getSubmittedFileName();
+        //gravar o arquivo no disco
+        String caminhoArquivo = salvarEm + File.separator + nomeArquivo;
+        System.out.println(caminhoArquivo);
+        arquivoSelecionado.write(caminhoArquivo);
+        return caminhoArquivo;
     }
 
     /**

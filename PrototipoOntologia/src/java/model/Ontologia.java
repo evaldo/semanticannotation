@@ -20,51 +20,51 @@ public class Ontologia {
     String inputFileName = "";
     String URI = "";
     String arvore;
-
+    List<String> Listarvore = new ArrayList<>();
+    
     public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
         this.URI = URI;
+        
     }
-    List<String> Listarvore = new ArrayList<>();
+    
 
+    
+    
     public List<String> listarClasses() {
 
         try {
-            
+
             OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
             InputStream in = FileManager.get().open(inputFileName);
             if (in == null) {
                 throw new IllegalArgumentException("File: " + inputFileName + " not found");
             }
             inf.read(in, "");
-            ExtendedIterator classes = inf.listClasses();
+            if (inf.getNsPrefixURI("") != null) {
+                URI = inf.getNsPrefixURI("");
+            }
             
-           // System.out.println("TEtset da URI" + inf.getURI());
-            //inf.getNsPrefixURI("xml:base");
+            ExtendedIterator classes = inf.listClasses();
             while (classes.hasNext()) {
                 OntClass essaClasse = (OntClass) classes.next();
-
                 String vClasse = essaClasse.getLocalName();
                 if (vClasse != null && !essaClasse.hasSuperClass()) {
-                    
+
                     if (essaClasse.hasSubClass()) {
                         arvore = "<details><summary>Classe:" + vClasse + "</summary>";
                         Listarvore.add(arvore);
-                      //  OntClass cla = inf.getOntClass(URI + vClasse);
-                        for (Iterator i = essaClasse.listSubClasses(); i.hasNext();) {//aterei auiq
+                        for (Iterator i = essaClasse.listSubClasses(); i.hasNext();) {
                             OntClass c = (OntClass) i.next();
-
                             String subClasse = c.getLocalName();
                             listarSubClasses(subClasse);
-
                         }
-                            arvore = "</details>";
-                                          Listarvore.add(arvore);
-                    } else{
+                        arvore = "</details>";
+                        Listarvore.add(arvore);
+                    } else {
                         arvore = "<summary>Classe:" + vClasse + "</summary>";
                         Listarvore.add(arvore);
                     }
-
                 }
             }
         } catch (Exception e) {
@@ -75,17 +75,13 @@ public class Ontologia {
 
     public void listarSubClasses(String classe) {
         OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-
         InputStream in = FileManager.get().open(inputFileName);
-
         if (in == null) {
             throw new IllegalArgumentException("File: " + inputFileName + " not found");
         }
         inf.read(in, "");
-
         OntClass cla = inf.getOntClass(URI + classe);
         ArrayList<String> sc = new ArrayList<String>();
-
         if (cla.hasSubClass()) {
             arvore = "<details><summary>SubClasse:" + classe + "</summary>";
             Listarvore.add(arvore);
@@ -94,12 +90,11 @@ public class Ontologia {
 
                 String VSubClasses = c.getLocalName();
 
-                arvore = "<p>" + VSubClasses + " é uma sub classe de " + classe;
+                arvore = VSubClasses + "<p>";//mudei aqui
                 Listarvore.add(arvore);
-                if (c.hasSubClass()){
-                listarSubClasses(VSubClasses);
-            }
-                
+                if (c.hasSubClass()) {
+                    listarSubClasses(VSubClasses);
+                }
             }
             arvore = "</details>";
             Listarvore.add(arvore);
@@ -107,7 +102,6 @@ public class Ontologia {
             arvore = "<summary>" + classe + "</summary>";
             Listarvore.add(arvore);
         }
-
     }
 
     public String getInputFileName() {

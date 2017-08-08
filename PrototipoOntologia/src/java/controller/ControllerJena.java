@@ -51,9 +51,7 @@ public class ControllerJena extends HttpServlet {
 
             String pastaProgeto = getServletContext().getRealPath("");
             String nomeArquivo = upLoad(request, response, pastaProgeto);
-            System.out.println(pastaProgeto);
             String uri = request.getParameter("uri");
-            System.out.println(uri);
 
             Ontologia ont = new Ontologia(nomeArquivo, uri);
             request.setAttribute("ClassesOnt", ont.listarClasses());
@@ -64,7 +62,6 @@ public class ControllerJena extends HttpServlet {
     public String upLoad(HttpServletRequest request, HttpServletResponse response, String pastaProgeto) throws IOException, ServletException {
         String pastaArquivos = "arquivos";
         String salvarEm = pastaProgeto + File.separator + pastaArquivos;
-        System.out.println("Salvando arquivo em: " + salvarEm);
         File pasta = new File(salvarEm);
         if (!pasta.exists()) {
             pasta.mkdir();
@@ -73,7 +70,6 @@ public class ControllerJena extends HttpServlet {
         String nomeArquivo = arquivoSelecionado.getSubmittedFileName();
         //gravar o arquivo no disco
         String caminhoArquivo = salvarEm + File.separator + nomeArquivo;
-        System.out.println(caminhoArquivo);
         arquivoSelecionado.write(caminhoArquivo);
         return caminhoArquivo;
     }

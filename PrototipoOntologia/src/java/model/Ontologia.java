@@ -38,17 +38,20 @@ public class Ontologia {
             }
             inf.read(in, "");
             ExtendedIterator classes = inf.listClasses();
+            
+           // System.out.println("TEtset da URI" + inf.getURI());
+            //inf.getNsPrefixURI("xml:base");
             while (classes.hasNext()) {
                 OntClass essaClasse = (OntClass) classes.next();
 
                 String vClasse = essaClasse.getLocalName();
-                if (vClasse != null) {
-
+                if (vClasse != null && !essaClasse.hasSuperClass()) {
+                    
                     if (essaClasse.hasSubClass()) {
                         arvore = "<details><summary>Classe:" + vClasse + "</summary>";
                         Listarvore.add(arvore);
-                        OntClass cla = inf.getOntClass(URI + vClasse);
-                        for (Iterator i = cla.listSubClasses(); i.hasNext();) {
+                      //  OntClass cla = inf.getOntClass(URI + vClasse);
+                        for (Iterator i = essaClasse.listSubClasses(); i.hasNext();) {//aterei auiq
                             OntClass c = (OntClass) i.next();
 
                             String subClasse = c.getLocalName();

@@ -21,36 +21,37 @@ public class Ontologia {
     String URI = "";
     String arvore;
     List<String> Listarvore = new ArrayList<>();
-    
+
     public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
         this.URI = URI;
-        
-    }
-    
 
-    
-    
+    }
+
     public List<String> listarClasses() {
 
         try {
-
             OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
             InputStream in = FileManager.get().open(inputFileName);
+
             if (in == null) {
                 throw new IllegalArgumentException("File: " + inputFileName + " not found");
             }
             inf.read(in, "");
-            if (inf.getNsPrefixURI("") != null) {
-                URI = inf.getNsPrefixURI("");
-            }
-            
+
             ExtendedIterator classes = inf.listClasses();
             while (classes.hasNext()) {
                 OntClass essaClasse = (OntClass) classes.next();
+                if (inf.getNsPrefixURI("") != null) {
+                    URI = inf.getNsPrefixURI("");
+                } else {
+                    int flagURI = essaClasse.getURI().lastIndexOf("#");
+                    URI = essaClasse.getURI().substring(0, flagURI + 1);
+                }
+                System.out.println(URI);
                 String vClasse = essaClasse.getLocalName();
                 if (vClasse != null && !essaClasse.hasSuperClass()) {
-
+                    // System.out.println("TEste extração de uri na classe"+essaClasse.getURI());
                     if (essaClasse.hasSubClass()) {
                         arvore = "<details><summary>Classe:" + vClasse + "</summary>";
                         Listarvore.add(arvore);

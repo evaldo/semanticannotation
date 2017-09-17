@@ -31,7 +31,7 @@ public class ControllerJena extends HttpServlet {
             throws ServletException, IOException {
 
         if (request.getRequestURI().contains("/selecionarOntologias")) {
-            request.getRequestDispatcher("/WEB-INF/formOntologia.jsp").forward(request, response);
+            request.getRequestDispatcher("formOntologia.jsp").forward(request, response);
         }
     }
 
@@ -55,7 +55,7 @@ public class ControllerJena extends HttpServlet {
 
             Ontologia ont = new Ontologia(nomeArquivo, uri);
             request.setAttribute("ClassesOnt", ont.listarClasses());
-            request.getRequestDispatcher("/WEB-INF/viewClasses.jsp").forward(request, response);
+            request.getRequestDispatcher("viewClasses.jsp").forward(request, response);
         }
     }
 

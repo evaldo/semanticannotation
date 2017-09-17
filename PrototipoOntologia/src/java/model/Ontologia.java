@@ -1,6 +1,11 @@
 package model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +37,8 @@ public class Ontologia {
 
         try {
             OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+            OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+            
             InputStream in = FileManager.get().open(inputFileName);
 
             if (in == null) {
@@ -48,12 +55,18 @@ public class Ontologia {
                     int flagURI = essaClasse.getURI().lastIndexOf("#");
                     URI = essaClasse.getURI().substring(0, flagURI + 1);
                 }
-                System.out.println(URI);
+               // model.createOntology(URI);
+                //System.out.println(URI);
                 String vClasse = essaClasse.getLocalName();
+              //  if (vClasse != null){
+              //  model.createClass(URI+vClasse);
+              //  }
+                
                 if (vClasse != null && !essaClasse.hasSuperClass()) {
                     // System.out.println("TEste extração de uri na classe"+essaClasse.getURI());
+                    
                     if (essaClasse.hasSubClass()) {
-                        arvore = "<details><summary>Classe:" + vClasse + "</summary>";
+                        arvore = "<details><summary>" + vClasse + "</summary>";
                         Listarvore.add(arvore);
                         for (Iterator i = essaClasse.listSubClasses(); i.hasNext();) {
                             OntClass c = (OntClass) i.next();
@@ -63,11 +76,24 @@ public class Ontologia {
                         arvore = "</details>";
                         Listarvore.add(arvore);
                     } else {
-                        arvore = "<summary>Classe:" + vClasse + "</summary>";
+                        arvore = "<summary>" + vClasse + "</summary>";
                         Listarvore.add(arvore);
                     }
                 }
             }
+            StringWriter sw = new StringWriter();
+				inf.write(sw, "RDF/XML-ABBREV");
+				String owlCode = sw.toString();
+				File file = new File("k:/Outros/t6.rdf");
+				try{
+				FileWriter fw = new FileWriter(file);
+				fw.write(owlCode);
+				fw.close();
+				} catch(FileNotFoundException fnfe){
+				fnfe.printStackTrace();
+				} catch(IOException ioe){
+				ioe.printStackTrace();
+				}
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -84,7 +110,7 @@ public class Ontologia {
         OntClass cla = inf.getOntClass(URI + classe);
         ArrayList<String> sc = new ArrayList<String>();
         if (cla.hasSubClass()) {
-            arvore = "<details><summary>SubClasse:" + classe + "</summary>";
+            arvore = "<details><summary>" + classe + "</summary>";
             Listarvore.add(arvore);
             for (Iterator i = cla.listSubClasses(); i.hasNext();) {
                 OntClass c = (OntClass) i.next();

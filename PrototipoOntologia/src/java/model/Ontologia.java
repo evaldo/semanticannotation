@@ -33,19 +33,20 @@ public class Ontologia {
 
     }
 
+    public OntModel getModeloOntologico() {
+        OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+        InputStream in = FileManager.get().open(inputFileName);
+        if (in == null) {
+            throw new IllegalArgumentException("File: " + inputFileName + " not found");
+        }
+        inf.read(in, "");
+        return inf;
+    }
+
     public List<String> listarClasses() {
 
         try {
-            OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-            OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-            
-            InputStream in = FileManager.get().open(inputFileName);
-
-            if (in == null) {
-                throw new IllegalArgumentException("File: " + inputFileName + " not found");
-            }
-            inf.read(in, "");
-
+            OntModel inf = getModeloOntologico();
             ExtendedIterator classes = inf.listClasses();
             while (classes.hasNext()) {
                 OntClass essaClasse = (OntClass) classes.next();
@@ -55,16 +56,10 @@ public class Ontologia {
                     int flagURI = essaClasse.getURI().lastIndexOf("#");
                     URI = essaClasse.getURI().substring(0, flagURI + 1);
                 }
-               // model.createOntology(URI);
-                //System.out.println(URI);
                 String vClasse = essaClasse.getLocalName();
-              //  if (vClasse != null){
-              //  model.createClass(URI+vClasse);
-              //  }
-                
+
                 if (vClasse != null && !essaClasse.hasSuperClass()) {
-                    // System.out.println("TEste extração de uri na classe"+essaClasse.getURI());
-                    
+ 
                     if (essaClasse.hasSubClass()) {
                         arvore = "<details><summary>" + vClasse + "</summary>";
                         Listarvore.add(arvore);
@@ -81,42 +76,40 @@ public class Ontologia {
                     }
                 }
             }
-            StringWriter sw = new StringWriter();
-				inf.write(sw, "RDF/XML-ABBREV");
-				String owlCode = sw.toString();
-				File file = new File("k:/Outros/t6.rdf");
-				try{
-				FileWriter fw = new FileWriter(file);
-				fw.write(owlCode);
-				fw.close();
-				} catch(FileNotFoundException fnfe){
-				fnfe.printStackTrace();
-				} catch(IOException ioe){
-				ioe.printStackTrace();
-				}
+            gravarArquivo(inf);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return Listarvore;
     }
 
-    public void listarSubClasses(String classe) {
-        OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        InputStream in = FileManager.get().open(inputFileName);
-        if (in == null) {
-            throw new IllegalArgumentException("File: " + inputFileName + " not found");
+    public void gravarArquivo(OntModel inf) {
+        StringWriter sw = new StringWriter();
+        inf.write(sw, "RDF/XML-ABBREV");
+        String owlCode = sw.toString();
+        File file = new File("k:/Outros/teste234.rdf");
+        try {
+            FileWriter fw = new FileWriter(file);
+            fw.write(owlCode);
+            fw.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
-        inf.read(in, "");
+
+    }
+
+    public void listarSubClasses(String classe) {
+        OntModel inf = getModeloOntologico();
         OntClass cla = inf.getOntClass(URI + classe);
         ArrayList<String> sc = new ArrayList<String>();
-        if (cla.hasSubClass()) {
+        if (cla.hasSubClass() && !cla.hasSuperClass()) {
             arvore = "<details><summary>" + classe + "</summary>";
             Listarvore.add(arvore);
             for (Iterator i = cla.listSubClasses(); i.hasNext();) {
                 OntClass c = (OntClass) i.next();
-
                 String VSubClasses = c.getLocalName();
-
                 arvore = VSubClasses + "<p>";//mudei aqui
                 Listarvore.add(arvore);
                 if (c.hasSubClass()) {

@@ -26,7 +26,8 @@ public class Ontologia {
     String URI = "";
     String arvore;
     List<String> Listarvore = new ArrayList<>();
-
+    List<String> infoClasse = new ArrayList<>();
+    
     public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
         this.URI = URI;
@@ -61,17 +62,21 @@ public class Ontologia {
                 if (vClasse != null && !essaClasse.hasSuperClass()) {
  
                     if (essaClasse.hasSubClass()) {
-                        arvore = "<details><summary>" + vClasse + "</summary>";
+                   
+                        arvore = "<details><summary>"+vClasse+"</summary><p>";
+                        
                         Listarvore.add(arvore);
                         for (Iterator i = essaClasse.listSubClasses(); i.hasNext();) {
                             OntClass c = (OntClass) i.next();
                             String subClasse = c.getLocalName();
                             listarSubClasses(subClasse);
                         }
-                        arvore = "</details>";
+                        
+                        arvore = "</details><p>";
+                        
                         Listarvore.add(arvore);
                     } else {
-                        arvore = "<summary>" + vClasse + "</summary>";
+                        arvore = "<summary>" + vClasse + "</summary><p>";
                         Listarvore.add(arvore);
                     }
                 }
@@ -103,26 +108,40 @@ public class Ontologia {
     public void listarSubClasses(String classe) {
         OntModel inf = getModeloOntologico();
         OntClass cla = inf.getOntClass(URI + classe);
-        ArrayList<String> sc = new ArrayList<String>();
-        if (cla.hasSubClass() && !cla.hasSuperClass()) {
-            arvore = "<details><summary>" + classe + "</summary>";
+   
+        if (cla.hasSubClass() ) {
+            
+            arvore = "<details><summary>" + classe + "</summary><p>";
             Listarvore.add(arvore);
+            
             for (Iterator i = cla.listSubClasses(); i.hasNext();) {
                 OntClass c = (OntClass) i.next();
                 String VSubClasses = c.getLocalName();
-                arvore = VSubClasses + "<p>";//mudei aqui
-                Listarvore.add(arvore);
                 if (c.hasSubClass()) {
                     listarSubClasses(VSubClasses);
+                }
+                else{
+               arvore = "<summary>" + VSubClasses + "</summary><p>";
+                Listarvore.add(arvore);
                 }
             }
             arvore = "</details>";
             Listarvore.add(arvore);
         } else {
-            arvore = "<summary>" + classe + "</summary>";
+            arvore = "<summary>" + classe + "</summary><p>";
             Listarvore.add(arvore);
         }
     }
+
+    public List<String> informacoesClasse(String classe){
+        OntModel inf = getModeloOntologico();
+        OntClass cla = inf.getOntClass(URI + classe);
+        String commentClasse = cla.getComment(classe);
+                infoClasse.add(commentClasse);
+    return infoClasse;
+    }
+    
+    
 
     public String getInputFileName() {
         return inputFileName;

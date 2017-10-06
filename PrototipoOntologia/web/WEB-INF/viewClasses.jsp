@@ -7,7 +7,13 @@
         <title>Protótipo de ontologias</title>
     </head>
     <body>
+        <h1> test</h1>
+        
         <c:forEach var="k" items="${ClassesOnt}">${k}
         </c:forEach>  
+        
+        <c:forEach var="k" items="${infoClasses}">${k}
+        </c:forEach>  
+        
     </body>
 </html>

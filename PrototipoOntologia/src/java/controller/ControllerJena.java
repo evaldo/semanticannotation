@@ -52,11 +52,19 @@ public class ControllerJena extends HttpServlet {
             String pastaProgeto = getServletContext().getRealPath("");
             String nomeArquivo = upLoad(request, response, pastaProgeto);
             String uri = request.getParameter("uri");
-
+            String classe = request.getParameter("classe");
+            
+            request.setAttribute("nomeArquivo",nomeArquivo);
+            request.setAttribute("uri",uri);
             Ontologia ont = new Ontologia(nomeArquivo, uri);
+            //request.setAttribute("ont", ont);
             request.setAttribute("ClassesOnt", ont.listarClasses());
+            if(classe!=null){
+            request.setAttribute("infoClasses", ont.informacoesClasse(classe));
+            }
             request.getRequestDispatcher("viewClasses.jsp").forward(request, response);
         }
+        
     }
 
     public String upLoad(HttpServletRequest request, HttpServletResponse response, String pastaProgeto) throws IOException, ServletException {

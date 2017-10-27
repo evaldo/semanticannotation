@@ -8,7 +8,7 @@
         <meta name="author" content="">
         <link rel="shortcut icon" href="assets/ico/favicon.ico">
 
-        <title>GECID CES-JF</title>
+        <title>INSTANT - Bootstrap Theme</title>
 
         <!-- Bootstrap core CSS -->
         <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -68,7 +68,7 @@
         <div class="container">
             <div class="row centered mt mb">
                 <center>
-                    <h1>Visualizador de Hierarquia Ontológica</h1>
+                    <h1>Visualizador de Hieraquia Ontológica</h1>
                     <br><br><br>
 
                     <form action="listarOntologias" enctype="multipart/form-data" method="post">
@@ -87,17 +87,15 @@
                         </div>
 
                         <div class="form-group row">
-                            <br>
-                             <input type="submit" value="Enviar">
-                            <br><br>
+                         
                             (Só será necessário caso dê problemas na Hora de exibição, pelo fato que existem tipos de arquivos de ontologia escrito de formas diferentes.)
+                       <input type="submit" value="Visualizar Hierarquia e Anotar Sematicamente">
                 
                            
                         </div>
-                        </div>
+                      
 
                     </form>
-
             </div><! --/row -->
         </div><! --/container -->
 

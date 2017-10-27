@@ -2,9 +2,11 @@ package model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,15 +28,14 @@ public class Ontologia {
     String URI = "";
     String arvore;
     List<String> Listarvore = new ArrayList<>();
-    List<String> infoClasse = new ArrayList<>();
-    
+
     public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
         this.URI = URI;
 
     }
 
-    public OntModel getModeloOntologico() {
+    public OntModel gerarModelo() {
         OntModel inf = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
         InputStream in = FileManager.get().open(inputFileName);
         if (in == null) {
@@ -44,11 +45,36 @@ public class Ontologia {
         return inf;
     }
 
+    public String gravarModelo(OntModel inf) {
+        StringWriter sw = new StringWriter();
+        inf.write(sw, "RDF/XML-ABBREV");
+        String owlCode = sw.toString();
+        String localArquivo = "c:/Outros/gecon.rdf";
+        try {
+            OutputStreamWriter bufferOut = new OutputStreamWriter(new FileOutputStream(localArquivo),"UTF-8");
+            bufferOut.write(owlCode);
+		
+		
+		bufferOut.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return localArquivo;
+    }
+
     public List<String> listarClasses() {
+        Listarvore.add("<div class=\"menu-container\">\n"
+                + "    <ul class=\"menu clearfix\">\n"
+                + "        <li><a href=\"#\">Classes</a>\n"
+                + "            <ul class=\"sub-menu clearfix\">\n"
+                + "              ");
 
         try {
-            OntModel inf = getModeloOntologico();
+            OntModel inf = gerarModelo();
             ExtendedIterator classes = inf.listClasses();
+
             while (classes.hasNext()) {
                 OntClass essaClasse = (OntClass) classes.next();
                 if (inf.getNsPrefixURI("") != null) {
@@ -60,88 +86,77 @@ public class Ontologia {
                 String vClasse = essaClasse.getLocalName();
 
                 if (vClasse != null && !essaClasse.hasSuperClass()) {
- 
+                    String comentario = inf.getOntClass(URI + vClasse).getComment(null);
+                    String test = comentario;
+                    if (test == null) {
+                        test = "Não Possui Comentários";
+                    }
                     if (essaClasse.hasSubClass()) {
-                   
-                        arvore = "<details><summary>"+vClasse+"</summary><p>";
-                        
+
+                        arvore = "<li><a href=\"#\" data-tooltip=\"" + test.replace("\"", "\'") + "\">" + vClasse + "</a>";
                         Listarvore.add(arvore);
+                        Listarvore.add("<ul class=\"sub-menu\">");
+
                         for (Iterator i = essaClasse.listSubClasses(); i.hasNext();) {
                             OntClass c = (OntClass) i.next();
                             String subClasse = c.getLocalName();
                             listarSubClasses(subClasse);
                         }
-                        
-                        arvore = "</details><p>";
-                        
-                        Listarvore.add(arvore);
+                        Listarvore.add("</ul></li>");
+
                     } else {
-                        arvore = "<summary>" + vClasse + "</summary><p>";
+                        arvore = "<li><a href=\"#\" data-tooltip=\"" + test.replace("\"", "\'") + "\">" + vClasse + "</a></li>";
                         Listarvore.add(arvore);
                     }
                 }
             }
-            gravarArquivo(inf);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        Listarvore.add("      </ul><!-- submenu -->\n"
+                + "            \n"
+                + "        </li>\n"
+                + "    </ul>\n"
+                + "</div>");
+
         return Listarvore;
     }
 
-    public void gravarArquivo(OntModel inf) {
-        StringWriter sw = new StringWriter();
-        inf.write(sw, "RDF/XML-ABBREV");
-        String owlCode = sw.toString();
-        File file = new File("k:/Outros/teste234.rdf");
-        try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(owlCode);
-            fw.close();
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-    }
-
     public void listarSubClasses(String classe) {
-        OntModel inf = getModeloOntologico();
+        OntModel inf = gerarModelo();
         OntClass cla = inf.getOntClass(URI + classe);
-   
-        if (cla.hasSubClass() ) {
-            
-            arvore = "<details><summary>" + classe + "</summary><p>";
-            Listarvore.add(arvore);
-            
+        String comentario = inf.getOntClass(URI + classe).getComment(null);
+        String test = comentario;
+        if (test == null) {
+            test = "Não Possui Comentários";
+        }
+        if (cla.hasSubClass()) {
+            Listarvore.add("<li><a href=\"#\" data-tooltip=\"" + test.replace("\"", "\'") + "\">" + classe + "</a>");
+            Listarvore.add("<ul class=\"sub-menu\">");
             for (Iterator i = cla.listSubClasses(); i.hasNext();) {
                 OntClass c = (OntClass) i.next();
                 String VSubClasses = c.getLocalName();
+                String comentarioSubClasse = inf.getOntClass(URI + VSubClasses).getComment(null);//1
+                String testSubClasse = comentarioSubClasse;//1
+                if (testSubClasse == null) {
+                    testSubClasse = "Não Possui Comentários";
+                }
+
                 if (c.hasSubClass()) {
                     listarSubClasses(VSubClasses);
-                }
-                else{
-               arvore = "<summary>" + VSubClasses + "</summary><p>";
-                Listarvore.add(arvore);
+
+                } else {
+                    arvore = "<li><a href=\"#\" data-tooltip=\"" + testSubClasse.replace("\"", "\'") + "\">" + VSubClasses + "</a></li>";//mudei aqui
+                    Listarvore.add(arvore);
                 }
             }
-            arvore = "</details>";
-            Listarvore.add(arvore);
+            Listarvore.add("</ul></li>");
         } else {
-            arvore = "<summary>" + classe + "</summary><p>";
+            arvore = "<li><a href=\"#\" data-tooltip=\"" + test.replace("\"", "\'") + "\">" + classe + "</a></li>";
             Listarvore.add(arvore);
         }
     }
-
-    public List<String> informacoesClasse(String classe){
-        OntModel inf = getModeloOntologico();
-        OntClass cla = inf.getOntClass(URI + classe);
-        String commentClasse = cla.getComment(classe);
-                infoClasse.add(commentClasse);
-    return infoClasse;
-    }
-    
-    
 
     public String getInputFileName() {
         return inputFileName;

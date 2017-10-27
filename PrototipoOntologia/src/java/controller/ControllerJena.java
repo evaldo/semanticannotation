@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import model.Ontologia;
+import org.apache.jena.ontology.OntModel;
 
 /**
  *
@@ -52,19 +53,13 @@ public class ControllerJena extends HttpServlet {
             String pastaProgeto = getServletContext().getRealPath("");
             String nomeArquivo = upLoad(request, response, pastaProgeto);
             String uri = request.getParameter("uri");
-            String classe = request.getParameter("classe");
-            
-            request.setAttribute("nomeArquivo",nomeArquivo);
-            request.setAttribute("uri",uri);
+
             Ontologia ont = new Ontologia(nomeArquivo, uri);
-            //request.setAttribute("ont", ont);
+            OntModel ontM = ont.gerarModelo();
             request.setAttribute("ClassesOnt", ont.listarClasses());
-            if(classe!=null){
-            request.setAttribute("infoClasses", ont.informacoesClasse(classe));
-            }
+            request.setAttribute("modelo", ont.gravarModelo(ontM));
             request.getRequestDispatcher("viewClasses.jsp").forward(request, response);
         }
-        
     }
 
     public String upLoad(HttpServletRequest request, HttpServletResponse response, String pastaProgeto) throws IOException, ServletException {

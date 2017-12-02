@@ -1,9 +1,7 @@
 package model;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -17,7 +15,6 @@ import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.iterator.ExtendedIterator;
-
 /**
  *
  * @author Filipe
@@ -32,7 +29,6 @@ public class Ontologia {
     public Ontologia(String inputFileName, String URI) {
         this.inputFileName = inputFileName;
         this.URI = URI;
-
     }
 
     public OntModel gerarModelo() {
@@ -51,11 +47,9 @@ public class Ontologia {
         String owlCode = sw.toString();
         String localArquivo = "c:/Outros/gecon.rdf";
         try {
-            OutputStreamWriter bufferOut = new OutputStreamWriter(new FileOutputStream(localArquivo),"UTF-8");
+            OutputStreamWriter bufferOut = new OutputStreamWriter(new FileOutputStream(localArquivo), "UTF-8");
             bufferOut.write(owlCode);
-		
-		
-		bufferOut.close();
+            bufferOut.close();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         } catch (IOException ioe) {
@@ -65,12 +59,7 @@ public class Ontologia {
     }
 
     public List<String> listarClasses() {
-        Listarvore.add("<div class=\"menu-container\">\n"
-                + "    <ul class=\"menu clearfix\">\n"
-                + "        <li><a href=\"#\">Classes</a>\n"
-                + "            <ul class=\"sub-menu clearfix\">\n"
-                + "              ");
-
+        
         try {
             OntModel inf = gerarModelo();
             ExtendedIterator classes = inf.listClasses();
@@ -114,11 +103,7 @@ public class Ontologia {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        Listarvore.add("      </ul><!-- submenu -->\n"
-                + "            \n"
-                + "        </li>\n"
-                + "    </ul>\n"
-                + "</div>");
+     
 
         return Listarvore;
     }
@@ -137,17 +122,16 @@ public class Ontologia {
             for (Iterator i = cla.listSubClasses(); i.hasNext();) {
                 OntClass c = (OntClass) i.next();
                 String VSubClasses = c.getLocalName();
-                String comentarioSubClasse = inf.getOntClass(URI + VSubClasses).getComment(null);//1
-                String testSubClasse = comentarioSubClasse;//1
+                String comentarioSubClasse = inf.getOntClass(URI + VSubClasses).getComment(null);
+                String testSubClasse = comentarioSubClasse;
                 if (testSubClasse == null) {
                     testSubClasse = "Não Possui Comentários";
                 }
-
                 if (c.hasSubClass()) {
                     listarSubClasses(VSubClasses);
 
                 } else {
-                    arvore = "<li><a href=\"#\" data-tooltip=\"" + testSubClasse.replace("\"", "\'") + "\">" + VSubClasses + "</a></li>";//mudei aqui
+                    arvore = "<li><a href=\"#\" data-tooltip=\"" + testSubClasse.replace("\"", "\'") + "\">" + VSubClasses + "</a></li>";
                     Listarvore.add(arvore);
                 }
             }
